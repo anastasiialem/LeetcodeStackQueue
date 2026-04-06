@@ -41,46 +41,25 @@ class FreqStack:
         :param self: self param
         """
         self.deq=None
+        self.freq={}
     def push(self, val: int) -> None:
         """
         Function push
         :param self: self param
         :param val: value to push
         """
-        nod=self.deq
         nod0=Node(val)
-        nod0.next=nod
+        nod0.next=self.deq
         self.deq=nod0
-    @staticmethod
-    def frequancy(head):
+        if val not in self.freq:
+            self.freq[val] = 0
+        self.freq[val] += 1
+    def frequancy(self):
         """
         Returns nodes frequancy
         :param head: head to start
         """
-        new_head=Node()
-        hd=new_head
-        while head is not None:
-            prob=hd
-            k=0
-            while prob.next is not None:
-                if prob.next.data==head.data:
-                    prob.next.frequance+=1
-                    k=1
-                    break
-                prob=prob.next
-            if k==0:
-                prob.next=Node(head.data,1)
-            head=head.next
-            k=0
-        ll=Node()
-        i=0
-        prob=hd.next
-        while prob is not None:
-            if prob.frequance>i:
-                i=prob.frequance
-                ll=Node(prob.data)
-            prob=prob.next
-        return ll.data
+        return max(self.freq.values())
     def pop(self) -> int:
         """
         Function pop
@@ -88,29 +67,25 @@ class FreqStack:
         """
         if self.deq is None or self.deq.data is None:
             return None
-        ll=self.frequancy(self.deq)
-        if self.deq.data==ll:
+        ll=self.frequancy()
+        if self.freq[self.deq.data]==ll:
             nod=self.deq
             self.deq=self.deq.next
+            self.freq[nod.data]-=1
+            if self.freq[nod.data]==0:
+                del self.freq[nod.data]
             return nod.data
         prob=self.deq
         while prob.next is not None:
-            if prob.next.data==ll:
+            if self.freq[prob.next.data]==ll:
                 nod=prob.next
                 prob.next=prob.next.next
+                self.freq[nod.data] -= 1
+                if self.freq[nod.data] == 0:
+                    del self.freq[nod.data]
                 return nod.data
             prob=prob.next
         return None
-        # head=self.deq
-        # prob=head
-        # nod=Node()
-        # while prob.next is not None:
-        #     if prob.next.data==ll:
-        #         nod=Node(prob.next.data)
-        #         prob.next=prob.next.next
-        #         break
-        #     prob=prob.next
-        # return nod.data
 
 if __name__=='__main__':
     import doctest
